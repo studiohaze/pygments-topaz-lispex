@@ -1,0 +1,2 @@
+recursive-include examples *.tpz *.lspx
+recursive-include tests *.py
