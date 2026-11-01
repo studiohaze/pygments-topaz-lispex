@@ -1,0 +1,50 @@
+import std.io as io
+
+export type Count = int
+const LIMIT: Count = 4
+record Item derives Eq { value: int }
+enum State { Ready, Done }
+newtype ItemId = int
+protocol Value { function value(item: Self) -> int }
+impl Value<Item> {
+    function value(item: Item) -> int { item.value }
+}
+
+function f(value: int) -> int { return value + 1 }
+let xs = [1, 2, 3]
+let mapped = xs.map(f)
+let map = 1
+let set = 2
+let maps = map { "answer": 42 }
+let sets = set { 1, 2, 3 }
+let spacedMap = map    { "answer": 42 }
+let spacedSet = set    { 1, 2, 3 }
+let interpolated = "{map { "answer": 42 }}:{set { 1, 2 }}:{xs.map(f)}"
+let mapValue = 1
+let setValue = 2
+let map상태 = 3
+let set💎 = 4
+let truth = true
+let untruth = false
+let absent = null
+let mut total = 0
+for index in 0..LIMIT by 2 {
+    if index == 0 { continue } else { total = total + index }
+}
+while total < LIMIT { total = total + 1 }
+loop { break }
+let state = match State.Ready {
+    case Ready => 1
+    case Done => 0
+}
+function cleanup() -> int {
+    defer { io.writeLine("done") }
+    return state
+}
+let parallel = concurrent {
+    first: f(1)
+    second: f(2)
+}
+function readFile(path: string) -> Result<string, string> {
+    using file = io.open(path)? { return file.read() }
+}

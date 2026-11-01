@@ -19,6 +19,25 @@ def tokens(lexer, source):
 
 
 class TopazTests(unittest.TestCase):
+    def test_521_keywords_collection_heads_and_expected_markup(self):
+        source = (ROOT / 'examples/keywords-521.tpz').read_text(encoding='utf-8')
+        result = tokens(TopazLexer(), source)
+        self.assertEqual(''.join(value for _, value in result), source)
+        self.assertFalse(any(kind is Error for kind, _ in result))
+        words = ('let mut const type function return if else match case for in by while '
+                 'break continue defer concurrent true false null import export as record '
+                 'enum newtype protocol impl derives loop using')
+        for word in words.split():
+            self.assertTrue(any(kind in Keyword and value == word for kind, value in result), word)
+        for word in ['map', 'set']:
+            self.assertEqual(sum(kind in Keyword and value == word for kind, value in result), 3)
+        self.assertEqual(sum(kind is Name and value == 'map' for kind, value in result), 3)
+        self.assertIn((Name, 'set'), result)
+        for name in ['mapValue', 'setValue', 'map상태', 'set💎']:
+            self.assertIn((Name, name), result)
+        html = highlight(source, TopazLexer(), HtmlFormatter(nowrap=True))
+        self.assertEqual(html, (ROOT / 'examples/keywords-521.expect.html').read_text(encoding='utf-8'))
+
     def test_non_nested_comment_closes_at_first_terminator(self):
         result = tokens(TopazLexer(), '/* outer /* inner */ let x = 1\n')
         self.assertEqual(''.join(v for t, v in result if t in Comment),
